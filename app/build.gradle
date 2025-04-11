@@ -1,0 +1,58 @@
+plugins {
+    id 'com.android.application'
+//    alias(libs.plugins.android.application)
+    id 'com.google.gms.google-services'
+}
+
+android {
+    namespace 'com.example.googlesignin'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.example.googlesignin"
+        minSdk 31
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("C:\\Users\\247039655\\Documents\\keystore.jks") // Replace with the actual path to your keystore file
+            storePassword "123456" // Replace with your keystore password
+            keyAlias "key0" // Replace with your key alias
+            keyPassword "123456" // Replace with your key password
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.release // Use the same keystore for the debug version
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release // Use the same keystore for the release version
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+
+
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    implementation 'com.google.firebase:firebase-auth:23.2.0'
+    implementation 'com.google.android.gms:play-services-auth:20.2.0'
+}
