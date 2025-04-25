@@ -20,7 +20,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("C:\\Users\\247039655\\Documents\\keystore.jks") // Replace with the actual path to your keystore file
+            storeFile file("C:\\Users\\247039655\\Documents\\mad_googlesignin\\keystore.jks") // Replace with the actual path to your keystore file
             storePassword "123456" // Replace with your keystore password
             keyAlias "key0" // Replace with your key alias
             keyPassword "123456" // Replace with your key password
@@ -55,4 +55,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     implementation 'com.google.firebase:firebase-auth:23.2.0'
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
+    implementation 'androidx.credentials:credentials:1.2.0' // For Credential Manager
+    implementation 'androidx.biometric:biometric:1.1.0' // Corrected dependency for Biometric
 }

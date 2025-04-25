@@ -3,6 +3,9 @@ package com.example.googlesignin;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etEmail, etPassword;
     private Button btnLogin, btnGoogleSignIn, btnSignup;
     private GoogleSignInClient googleSignInClient;
-
+    private Button btnBiometricLogin;
     private static final int RC_SIGN_IN = 9001;
 
     @Override
@@ -43,6 +46,10 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
         btnSignup = findViewById(R.id.btnSignup);
+
+        btnBiometricLogin = findViewById(R.id.btnBiometricLogin);
+        btnBiometricLogin.setOnClickListener(v -> checkBiometricLogin());
+
 
         // Configure Google Sign-In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -89,6 +96,10 @@ public class LoginActivity extends AppCompatActivity {
                 Intent signInIntent = googleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             });
+        });
+
+        btnSignup.setOnClickListener(v -> {
+            navigateToSignup();
         });
 
     }
@@ -142,7 +153,70 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void checkBiometricLogin() {
+        if (!isBiometricEnabled()) {
+            Log.w(TAG, "biometric not enabled");
+            return;
+        }
+        BiometricManager biometricManager = BiometricManager.from(this);
+        switch (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
+            case BiometricManager.BIOMETRIC_SUCCESS:
+                if (isBiometricEnabled()) {
+                    authenticateWithBiometrics();
+                } else {
+                    Toast.makeText(this, "Biometric authentication is not enabled for this account", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+                Toast.makeText(this, "No biometric hardware available", Toast.LENGTH_SHORT).show();
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+                Toast.makeText(this, "Biometric hardware unavailable", Toast.LENGTH_SHORT).show();
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+                Toast.makeText(this, "No biometric credentials enrolled", Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
 
 
+    private boolean isBiometricEnabled() {
+        return getSharedPreferences("AuthPrefs", MODE_PRIVATE)
+                .getBoolean("biometricEnabled", false);
+    }
+
+    private void authenticateWithBiometrics() {
+        BiometricPrompt biometricPrompt = new BiometricPrompt(this,
+                ContextCompat.getMainExecutor(this),
+                new BiometricPrompt.AuthenticationCallback() {
+                    @Override
+                    public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
+                        super.onAuthenticationSucceeded(result);
+                        Toast.makeText(LoginActivity.this, "Biometric login successful", Toast.LENGTH_SHORT).show();
+                        navigateToHome();
+                    }
+
+                    @Override
+                    public void onAuthenticationFailed() {
+                        super.onAuthenticationFailed();
+                        Toast.makeText(LoginActivity.this, "Biometric authentication failed", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onAuthenticationError(int errorCode, CharSequence errString) {
+                        super.onAuthenticationError(errorCode, errString);
+                        Toast.makeText(LoginActivity.this, "Biometric authentication error: " + errString, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Biometric Login")
+                .setSubtitle("Log in using your biometric credential")
+                .setNegativeButtonText("Cancel")
+                .build();
+
+        biometricPrompt.authenticate(promptInfo);
     }
 }
