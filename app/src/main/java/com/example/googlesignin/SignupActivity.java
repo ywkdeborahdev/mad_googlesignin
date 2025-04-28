@@ -21,13 +21,6 @@ public class SignupActivity extends AppCompatActivity {
     private EditText etEmail, etPassword, etConfirmPassword;
     private Button btnSignup;
 
-    private void saveSessionStatus(boolean isLoggedIn) {
-        getSharedPreferences("AuthPrefs", MODE_PRIVATE)
-                .edit()
-                .putBoolean("isLoggedIn", isLoggedIn)
-                .apply();
-    }
-
     private void navigateToHome() {
         Log.d(TAG, "Navigating to Home");
         startActivity(new Intent(this, MainActivity.class));
@@ -78,10 +71,16 @@ public class SignupActivity extends AppCompatActivity {
                         });
             }
         });
-
-
-
-
     }
+
+
+    // Method to save session status
+    private void saveSessionStatus(boolean isLoggedIn) {
+        getSharedPreferences("AuthPrefs", MODE_PRIVATE)
+                .edit()
+                .putBoolean("isLoggedIn", isLoggedIn)
+                .apply();
+    }
+
 
 }

@@ -46,7 +46,6 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
         btnSignup = findViewById(R.id.btnSignup);
-
         btnBiometricLogin = findViewById(R.id.btnBiometricLogin);
         btnBiometricLogin.setOnClickListener(v -> checkBiometricLogin());
 
@@ -58,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
-// Check for existing session
+        // Check for existing session
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             navigateToHome();
@@ -158,6 +157,7 @@ public class LoginActivity extends AppCompatActivity {
     private void checkBiometricLogin() {
         if (!isBiometricEnabled()) {
             Log.w(TAG, "biometric not enabled");
+            Toast.makeText(this, "biometric not enabled", Toast.LENGTH_SHORT).show();
             return;
         }
         BiometricManager biometricManager = BiometricManager.from(this);
@@ -184,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isBiometricEnabled() {
         return getSharedPreferences("AuthPrefs", MODE_PRIVATE)
-                .getBoolean("biometricEnabled", false);
+                .getBoolean("biometricEnabled", true);
     }
 
     private void authenticateWithBiometrics() {
@@ -194,6 +194,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
                         super.onAuthenticationSucceeded(result);
+                        saveSessionStatus(true);
                         Toast.makeText(LoginActivity.this, "Biometric login successful", Toast.LENGTH_SHORT).show();
                         navigateToHome();
                     }

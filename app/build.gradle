@@ -20,7 +20,8 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("C:\\Users\\247039655\\Documents\\mad_googlesignin\\keystore.jks") // Replace with the actual path to your keystore file
+//            storeFile file("C:\\Users\\247039655\\Documents\\mad_googlesignin\\keystore.jks") // Replace with the actual path to your keystore file
+            storeFile file("//Users//deb//coding//Shape//mad_googlesignin//keystore.jks") // Replace with the actual path to your keystore file
             storePassword "123456" // Replace with your keystore password
             keyAlias "key0" // Replace with your key alias
             keyPassword "123456" // Replace with your key password
@@ -50,6 +51,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'androidx.activity:activity:1.8.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
